@@ -8,7 +8,8 @@ class SourceChangeException extends Exception { }
 $Applications = array(
 	'Java' => 'LastVersion',
 	'Firefox' => 'LastVersion',
-	'Chrome' => 'LastVersion'
+	'Chrome' => 'LastVersion',
+	'Adobe_Acrobat' => 'LastVersion'
 );
 
 foreach($Applications AS $ApplicationName => $AppLastVersion){
