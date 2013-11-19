@@ -12,9 +12,25 @@ $Applications = array(
 	'Adobe_Acrobat' => 'LastVersion'
 );
 
+if(!is_dir("ApplicationVersions")){
+    mkdir("ApplicationVersions", 0700);
+}
+$fileYesterday = "ApplicationVersions/".date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")-1, date("Y"))).".json";
+
+$ApplicationInfoYesterday = array();
+if(file_exists($fileYesterday)){
+    $ApplicationInfoYesterday = json_decode(file_get_contents($fileYesterday), true);
+}
+
+$ApplicationInfo = array();
 foreach($Applications AS $ApplicationName => $AppLastVersion){
     include('version_geters/'.$ApplicationName.'.php');
+
+    $AppVersionFunc = $ApplicationName.'Version';
+	$ApplicationInfo[$ApplicationName] = $AppVersionFunc();
 }
+$fileToday = "ApplicationVersions/".date("Y-m-d").".json";
+file_put_contents($fileToday, json_encode($ApplicationInfo));
 
 ?>
 <!DOCTYPE html>
@@ -33,21 +49,16 @@ foreach($Applications AS $ApplicationName => $AppLastVersion){
 	<table class="table table-bordered">
 		<tr>
 			<th>Application Name</th>
-			<th>Application Version</th>
+			<th>Version</th>
+			<th>Version Yesterday</th>
 		</tr>
-	<?php
-	foreach($Applications AS $ApplicationName => $AppLastVersion){
-        $AppVersionFunc = $ApplicationName.'Version';
-		$ApplicationVersion = $AppVersionFunc();
-	?>
+<?php	foreach($ApplicationInfo AS $ApplicationName => $ApplicationVersion):?>
 		<tr>
 			<td><?= $ApplicationName ?></td>
 			<td><?= $ApplicationVersion ?></td>
+			<td><?= isset($ApplicationInfoYesterday[$ApplicationName])?$ApplicationInfoYesterday[$ApplicationName]:'' ?></td>
 		</tr>
-
-	<?php
-	}
-	?>
+<?php	endforeach; 	?>
 	</table>
 </div>
 </body>
